@@ -25,7 +25,7 @@ coverage
 # nyc test coverage
 .nyc_output
 
-# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+# Grunt intermediate storage
 .grunt
 
 # Bower dependency directory (https://bower.io/)
@@ -102,3 +102,22 @@ dist
 
 # TernJS port file
 .tern-port
+
+# OS X temporary files
+.DS_Store
+
+# IntelliJ IDEA project files; if you want to commit IntelliJ settings, this recipe may be helpful:
+# https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+.idea/
+*.iml
+
+# Rush temporary files
+common/deploy/
+common/temp/
+common/autoinstallers/*/.npmrc
+**/.rush/temp/
+
+# Heft temporary files
+.heft
+
+**/dist/**
