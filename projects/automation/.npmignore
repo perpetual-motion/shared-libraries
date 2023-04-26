@@ -1,0 +1,8 @@
+src/**
+.eslintrc.js
+tsconfig.json
+dist/test/**
+.rush/**
+*.tgz
+node_modules/**
+*.log

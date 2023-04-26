@@ -1,0 +1,13 @@
+{
+  "defaults": {
+    "defines": [
+      [
+        "_CPPUNWIND",
+        "1"
+      ],
+      [
+        "M_ARCH_ARM64"
+      ]
+    ]
+  }
+}

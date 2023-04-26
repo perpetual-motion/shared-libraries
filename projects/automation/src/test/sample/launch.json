@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "name": "singlecore",
+      "type": "device-debugger",
+      "request": "launch",
+      "device": "mydevice",
+      "via": "stlink",            // selecting the stlink device
+    },
+    {
+      "name": "singlecore1",
+      "type": "device-debugger",
+      "request": "launch",
+      "device": "singlecore1",
+      "via": "jlink",             // selecting the jlink device
+    }
+
+  ]
+}

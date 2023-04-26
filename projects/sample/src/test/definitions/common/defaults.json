@@ -1,0 +1,26 @@
+{
+  "conditions": {
+    // example using a conditional to set the target platform based on the host platform
+    "${host:os} === 'linux'": {
+      "defaults": {
+        "target": {
+          "platform": "linux"
+        }
+      }
+    },
+    "${host:os} === 'win32'": {
+      "defaults": {
+        "target": {
+          "platform": "windows"
+        }
+      }
+    },
+    "${host:os} === 'darwin'": {
+      "defaults": {
+        "target": {
+          "platform": "macos"
+        }
+      }
+    }
+  }
+}

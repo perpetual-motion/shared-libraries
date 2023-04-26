@@ -1,0 +1,21 @@
+{
+  "toolset": "sample-toolset",
+  "version": "1.2.3",
+  "discover": {
+    "locations": [
+      "c:/nxp/**",
+      "c:/st/**"
+    ],
+    "requirements": {
+      "version": {
+        "match": ".*/Embedded Workbench 9.3/.*"
+      }, // require the path to match ${binary} with a regex to verify the right version 
+      "root": {
+        "folder": "${binary}/../../"
+      }, // root folder of the toolset 
+      "inc": {
+        "folder": "${root}/inc"
+      }, // the base include folder  
+    },
+  }
+}

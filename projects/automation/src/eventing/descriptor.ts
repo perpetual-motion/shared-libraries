@@ -1,0 +1,59 @@
+// Copyright (c) Perpetual-Motion project
+// Licensed under the MIT License.
+import { is } from '../system/guards';
+import { hierarchy } from '../system/info';
+import { getOrAdd } from '../system/map';
+import { smash } from '../text/identifiers';
+import { ArbitraryObject } from './interfaces';
+
+const ignore = new Set(['Object', 'Emitter']);
+
+export class Descriptors extends Map<string, Set<string>> {
+  static none = new Descriptors();
+
+  constructor(instance?: ArbitraryObject, descriptors?: Record<string, string | Array<string> | Set<string>>) {
+    super();
+
+    if (instance) {
+      if (instance instanceof Descriptors) {
+        // inherit whatever is in that instance
+        instance.forEach((value, key) => this.add(key, ...value));
+      } else {
+        // add all of the class names of the instance to the set of descriptors
+        for (const c of hierarchy(instance)) {
+          if (!ignore.has(c)){
+            this.add(c,'');
+          }
+        }
+      }
+    }
+
+    // add the specified descriptors
+    if (descriptors) {
+      Object.getOwnPropertyNames(descriptors).forEach(key => {
+        const value = descriptors[key];
+        if (!(value instanceof Function)) {
+          const v = descriptors[key];
+          if (is.array(v)) {
+            this.add(key, ...v);
+          } else if (is.string(v)) {
+            this.add(key, v);
+          }
+        }
+      });
+    }
+  }
+
+
+  override get(key: string): Set<string>|undefined {
+    return super.get(smash(key));
+  }
+
+  add(key: string, ...values: Array<string>) {
+    if (values.length) {
+      const set = getOrAdd(this, smash(key), ()=> new Set<string>());
+      values.forEach(each => set.add(each));
+    }
+  }
+}
+

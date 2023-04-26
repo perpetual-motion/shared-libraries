@@ -1,0 +1,26 @@
+// This file has the common definitions that adapt targets to the closest that we can support
+{
+  "defaults: ${target} === 'osx'": "common/apple.json",
+  "defaults: ${architecture} === 'riscv": {
+    "alignment": 8,
+    "defines": [
+      [
+        "__riscv"
+      ],
+      [
+        "__riscv__"
+      ],
+      [
+        "__WCHAR_TYPE__",
+        "int"
+      ]
+    ],
+    "architecture": "x86" // we have to override the architecture to x86 because we don't have a riscv architecture (so this is the closest)
+  },
+  "defaults: ${alignment}": {
+    "args": [
+      "--pack_alignment",
+      "${alignment}"
+    ]
+  }
+}

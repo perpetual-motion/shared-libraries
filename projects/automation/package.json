@@ -1,0 +1,29 @@
+{
+  "name": "@perpetual-motion/automation",
+  "version": "0.0.1",
+  "description": "All-in-one-automation library",
+  "main": "dist/exports.js",
+  "typings": "dist/exports.d.ts",
+  "scripts": {
+    "build": "tsc -p .",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.7",
+    "typescript": "5.0.2",
+    "@types/mocha": "10.0.1",
+    "eslint": "^8.26.0",
+    "mocha": "10.1.0",
+    "source-map-support": "0.5.21",
+    "@typescript-eslint/eslint-plugin": "5.42.0",
+    "@typescript-eslint/parser": "5.42.0",
+    "eslint-plugin-notice": "0.9.10",
+    "@rushstack/eslint-config": "3.2.0",
+    "eslint-plugin-header": "~3.1.1",
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "ts-morph": "^16.0.0",
+    "piscina": "^3.2.0"
+  }
+}

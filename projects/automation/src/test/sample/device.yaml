@@ -1,0 +1,55 @@
+
+device:                       # map of string:device
+  singlecore:                 # device: name='singlecore'
+    core:                     # property: 'core' (map of corename:core)
+      CM4:                    # core: - use CM4 as the processor
+        via: stlink@72/2      # core.CM4.via = stlink@72/2
+
+  singlecore1: 
+    core: CM4                 # select core CM4 
+
+  singlecore2:                #
+    core:                     
+      CM4:
+        via: stlink@72/2
+
+
+  dualcore:    
+    core:      
+      - CM4
+      - CM0Plus
+
+  dualcore2:
+    core: 
+      CM4: 
+        via: stlink
+      CM0Plus: 
+        via: stlink
+
+
+processor: 
+  CM4:
+    arch: arm
+    svd: ./CM4.svd
+    
+  CM0Plus:
+    arch: arm
+    svd: ./cm0plus.svd
+
+via: 
+  boop: stlink      # make an alias for stlink
+
+  stlink-new:       # stlink with a serial number set
+    stlink:
+      serialNumber: 00000
+
+  stlinkother:      # inherit another one and set more props
+    stlink-new:
+      cpuFrequency: 72Mhz
+      swoFrequency: 2Mhz
+
+  stlink@72/2:
+    stlink:
+      cpuFrequency: 72Mhz
+      swoFrequency: 2Mhz
+      port: 0

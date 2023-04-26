@@ -1,0 +1,36 @@
+{
+  "name": "GNU C++ [AVR/Arduino]",
+  "import": [
+    "common/gcc.json",
+    "common/defaults.json"
+  ],
+  "discover": {
+    "binary": "avr-g\\+\\+",
+    "locations": [
+      "${env:home}/appdata/local"
+    ],
+    "requirements": {
+      "root": {
+        "folder": "${binary}/../../"
+      },
+      "version": {
+        "regex": "^(\\d+[.]\\d+[.]\\d+)(?:-\\S*)?$"
+      },
+    }
+  },
+  "defaults": {
+    "target": {
+      "compiler": "gcc",
+      "architecture": "avr",
+      "bits": 32,
+      "platform": "none"
+    }
+  },
+  "conditions": {
+    "${host:os} === 'win32'": {
+      "discover": {
+        "locations": "${env:home}/appdata/local",
+      }
+    }
+  }
+}
