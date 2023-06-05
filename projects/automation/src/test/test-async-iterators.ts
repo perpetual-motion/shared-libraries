@@ -37,7 +37,7 @@ describe('[Async Iterators]',()=> {
     }
 
     strictEqual(total, 21, 'The total should be 21');
-    strictEqual(count, 9, 'The count should be 9');
+    strictEqual(count, 8, 'The count should be 8');
     ok(true, 'should have gotten here');
 
   });

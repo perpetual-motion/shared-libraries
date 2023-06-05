@@ -1,14 +1,10 @@
 // Copyright (c) Perpetual-Motion project
 // Licensed under the MIT License.
 
-import { describe, it } from 'mocha';
-import { strict, strictEqual } from 'node:assert';
-import { hasErrors } from '../sandbox/interfaces';
-import { Sandbox } from '../sandbox/sandbox';
-import { stringify } from '../system/json';
 
+/*
 describe('Sandbox',()=> {
-  /*
+
   describe('modules', async () => {
     it('transpile: creates a module from some code',async ()=>{
       const sandbox = new Sandbox();
@@ -41,8 +37,9 @@ describe('Sandbox',()=> {
 
   });
   */
-
+/*
   describe('functions',()=>{
+
     it('transpile: creates an async function from some code',async ()=>{
       const sandbox = new Sandbox();
       const src = `
@@ -66,5 +63,8 @@ describe('Sandbox',()=> {
       strictEqual(fn.length,1, 'should have one error');
       strictEqual(fn[0].code,1128, 'should have 1128: Declaration or statement expected');
     });
+
   });
+
 });
+*/

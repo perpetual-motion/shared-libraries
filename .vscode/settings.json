@@ -63,7 +63,7 @@
     "**/node_modules/**"
   ],
   "mochaExplorer.logpanel": true,
-  "mochaExplorer.mochaPath": "./projects/sample/node_modules/mocha",
+  "mochaExplorer.mochaPath": "./projects/automation/node_modules/mocha",
   "mochaExplorer.timeout": 500000,
   "mochaExplorer.require": [
     "source-map-support/register"
