@@ -1,7 +1,9 @@
 // Copyright (c) Perpetual-Motion project
 // Licensed under the MIT License.
 
+import { is, Primitive } from '../exports';
 import { safeEval } from '../sandbox/sandbox';
+import { linq } from '../system/linq';
 import { isIdentifierPart, isIdentifierStart } from './character-codes';
 
 export function taggedLiteral(templateString:string, templateVars:Record<string,any>) : string {
@@ -106,33 +108,141 @@ export function parseTaggedLiteral(templateString: string) {
   return result;
 }
 
-export function split(expression: string) {
+function split(expression: string) {
   return (expression.match(/(.*?):(.*)/) || ['','',expression]).slice(1);
 }
 
-export function resolve(expression:string, variables: Record<string,any>,dynamic = (prefix:string, expression:string)=>''): string{
+function resolveValue(expression:string, context: Record<string,any>,customResolver = (prefix:string, expression:string)=>''): string{
   const [prefix, suffix]= split(expression);
 
+  function joinIfArray(value: any, separator = '\u0007') {
+    return Array.isArray(value) ? value.join(separator) : value.toString();
+  }
+
   if (prefix) {
-    const variable = variables[prefix];
-    if (variable !== undefined && variable !== null) {      // did we get back an actual value
+    const variable = context[prefix];
+    if (variable !== undefined && variable !== null) {                  // did we get back an actual value
       // its a child of a variable
-      return suffix.includes(':') ?                         // is the suffix another expression?
-        resolve(suffix, variable) :                         // Yeah, resolve it
-        variable[suffix] ?? dynamic(prefix, suffix) ?? '';  // No, return the member of the variable, or dynamic, or empty string
+      return joinIfArray(suffix.includes(':') ?                         // is the suffix another expression?
+        resolveValue(suffix, variable) :                                // Yeah, resolve it
+        variable[suffix] ?? customResolver(prefix, suffix) ?? '');      // No, return the member of the variable, or dynamic, or empty string
     }
 
     // no variable by that name, so return the dynamic value, or an empty string
-    return dynamic(prefix, suffix) ?? '';
+    return joinIfArray(customResolver(prefix, suffix) ?? '');
   }
+
   // look up the value in the variables, or ask the dynamic function to resolve it, failing that, an empty string
-  return variables[suffix] ?? dynamic(prefix, suffix) ?? '';
+  return joinIfArray(context[suffix] ?? customResolver(prefix, suffix) ?? '');
 }
 
-export function render(templateString: string, variables: Record<string,any>, dynamic = (prefix:string, expression:string)=>'', quoteValues = false): string {
+class as {
+  /** returns the value as a number (NOT NaN) or undefined */
+  static number(value: any): number|undefined {
+    if (isNaN(value)) {
+      return undefined;
+    }
+    value = parseFloat(value);
+    return isNaN(value) ? undefined: value;
+  }
+
+  /** returns the value as an integer number (NOT NaN) or undefined */
+  static integer(value: any): number|undefined {
+    value = as.number(value);
+    return value === undefined ? undefined : Math.floor(value);
+  }
+
+  /** returns the value as a number (NOT NaN) or undefined */
+  static float(value: any): number|undefined {
+    return as.number(value); // all numbers can be floats
+  }
+
+  /** returns the value as a boolean or undefined */
+  static boolean(value: any): boolean|undefined {
+    switch (value){
+      case true:
+      case 'true':
+        return true;
+      case false:
+      case 'false':
+        return false;
+    }
+    return undefined;
+  }
+
+  static primitive(value:any) : Primitive|undefined {
+    switch (typeof value) {
+      case 'string':
+        return as.number(value) ?? as.boolean(value) ?? value;
+
+      case 'number':
+        return isNaN(value) ? undefined :value;
+
+      case 'boolean':
+        return value;
+
+      default:
+        return undefined;
+    }
+  }
+
+  static string(value:any) : string|undefined {
+    switch (typeof value) {
+      case 'object':
+        return undefined;
+
+      case 'string':
+        return value;
+
+      case 'number':
+      case 'boolean':
+        return isFinite(value as any) ? value.toString() : undefined;
+
+      default:
+        return undefined;
+    }
+  }
+
+  static js(value:any) : Primitive|undefined {
+    return JSON.stringify(as.primitive(value));
+  }
+}
+
+export function render(templateStrings: Array<string>, context: Record<string,any>, customResolver?:(prefix:string, expression:string)=>string, ensureValuesAreValidJS?:boolean): Array<string>
+export function render(templateString: string, context: Record<string,any>, customResolver?:(prefix:string, expression:string)=>string, ensureValuesAreValidJS?:boolean): string
+export function render(templateString: string|Array<string>, context: Record<string,any>, customResolver = (prefix:string, expression:string)=>'', asJs = false): string|Array<string> {
+  if (Array.isArray(templateString)) {
+    return templateString.map(each=>render(each, context, customResolver, asJs));
+  }
+
+  // quick exit if it's not a templated string
+  if (!templateString.includes('${')) {
+    return templateString;
+  }
   const { template, expressions, state, message } = parseTaggedLiteral(templateString);
-  const q = quoteValues ? (x:string)=>`'${x}'` : (x:string)=>x;
+  const stablilize = asJs ? as.js: (x:string)=>as.string(x)??'';
   return state === 'error' ?
     message:  // return the error message if the parse failed. (this is fatal anyways)
-    template.reduce((result, each, index) => `${result}${q(resolve(expressions[index-1], variables,dynamic))}${each}`); // resolve the inline expressions and join the template
+    template.reduce((result, each, index) => `${result}${stablilize(resolveValue(expressions[index-1], context,customResolver))}${each}`); // resolve the inline expressions and join the template
+}
+
+export function evaluateExpression(expression: string, context: Record<string,any>, customResolver = (prefix:string, expression:string)=>'') : Primitive|undefined {
+  const result = expression.match(/\!|==|!=|>=|<=|>|<|\?|\|\||&&/)? safeEval(render(expression, context, customResolver, true)) as Primitive : render(expression, context, customResolver);
+  return result === '' || result === 'undefined' || result === 'null' || result === null ? undefined : result;
+}
+
+export function recursiveRender<T extends Record<string,any>>(obj:T, context: Record<string,any>,customResolver = (prefix:string, expression:string)=>'') :T {
+  const result = Array.isArray(obj) ? [] : {} as Record<string,any>;
+  for (const [key, value] of linq.entries(obj)) {
+    const newKey = is.string(key) && key.includes('${') ? render(key, context, customResolver) : key;
+
+    if (is.string(value)) {
+      result[newKey] = evaluateExpression(value, context, customResolver);
+    } else if (typeof value === 'object') {
+      result[newKey] = recursiveRender(value, context, customResolver);
+    } else {
+      result[newKey] = value;
+    }
+  }
+  return result as T;
 }

@@ -1,0 +1,78 @@
+{
+  "typescript.tsdk": "common/temp/node_modules/typescript/lib",
+  "files.eol": "\n",
+  "files.exclude": {
+    "**/common/temp/**": true,
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.rush/**": true,
+    "**/*.log": true
+  },
+  "files.associations": {
+    "*.iced": "coffeescript",
+    "rush.json": "jsonc",
+    "**/rush/*.json": "jsonc",
+    "**/test/**/*.json": "jsonc",
+    "stdio.h": "c"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false,
+    "editor.tabSize": 2
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false,
+    "editor.tabSize": 2
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2
+  },
+  "eslint.workingDirectories": [
+    {
+      "changeProcessCWD": true,
+      "directory": "./projects/automation"
+    },
+    {
+      "changeProcessCWD": true,
+      "directory": "./projects/process"
+    }
+  ],
+  "eslint.debug": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  "eslint.format.enable": true,
+  "testExplorer.useNativeTesting": true,
+  "mochaExplorer.files": "**/dist/test/**/*.js",
+  "mochaExplorer.ignore": [
+    "**/*skip*",
+    "**/dist/test/**/*.d.ts",
+    "**/node_modules/**"
+  ],
+  "mochaExplorer.logpanel": true,
+  "mochaExplorer.mochaPath": "./projects/sample/node_modules/mocha",
+  "mochaExplorer.timeout": 500000,
+  "mochaExplorer.require": [
+    "source-map-support/register"
+  ],
+  "mochaExplorer.monkeyPatch": true,
+  "mochaExplorer.debuggerConfig": "MochaTest",
+  "mochaExplorer.watch": "**/dist/**/*.js",
+  "mochaExplorer.env": {
+    // turn this on to dump session.debug messages in the test output window.
+    "debug": "true"
+  },
+}

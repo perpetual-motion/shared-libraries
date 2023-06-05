@@ -118,6 +118,11 @@ export class path {
     return stats?.isDirectory() ? fullName : undefined;
   }
 
+  static async exists(name:string|undefined|Promise<string|undefined>, baseFolder?: string): Promise<undefined|string> {
+    const [fullName, stats]=await path.stats(name, baseFolder);
+    return stats ? fullName : undefined;
+  }
+
   static async isExecutable(name:string|undefined|Promise<string|undefined>, baseFolder?: string): Promise<undefined|string> {
     const info=await path.info(name, baseFolder);
     return info?.isFile && info.isExecutable ? info.fullPath : undefined;

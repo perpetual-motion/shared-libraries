@@ -4,7 +4,7 @@
 import { Dirent } from 'fs';
 import { constants, readdir, stat } from 'fs/promises';
 import { basename, extname, sep } from 'path';
-import { foreach } from '../async/awaiters';
+import { accumulator, foreach } from '../async/awaiters';
 import { ManualPromise } from '../async/manual-promise';
 import { returns } from '../async/returns';
 import { isWindows } from '../constants';
@@ -17,7 +17,6 @@ interface FolderWithChildren extends Folder {
 
 const cache = new Map<string,File|FolderWithChildren|Promise<FolderWithChildren|undefined>>();
 
-const set = new Set<string>();
 /**
  * This reads a directory and returns a map of the files and folders in it
  * It is quite tolerant of errors and rentrancy, so if multiple callers are trying to get the same results
@@ -31,34 +30,31 @@ async function readDirectory(fullPath: string,executableExtensions: Set<string> 
   // have we already read this directory?
   let folder = cache.get(fullPath);
   let promise:ManualPromise<FolderWithChildren|undefined>|undefined;
-  let info = '';
-  if (!folder) {
-    info+= 'not in cache,';
 
+  if (!folder) {
     // create a promise and insert it into the cache, so if something else comes looking before we do any async, they can await that
     promise = new ManualPromise<FolderWithChildren|undefined>();
     cache.set(fullPath, promise);
 
     const stats = await stat(fullPath).catch(returns.undefined);
 
-    if (stats?.isDirectory()) {
-      folder = {
-        name: basename(fullPath),
-        fullPath: fullPath,
-        isFolder: true,
-        isFile: false,
-        isLink: stats.isSymbolicLink(),
-      } as FolderWithChildren;
-    } else {
+    if (!stats?.isDirectory()) {
       // no results, return undefined.
       promise.resolve(folder);
       return undefined;
     }
+
+    folder = {
+      name: basename(fullPath),
+      fullPath,
+      isFolder: true,
+      isFile: false,
+      isLink: stats.isSymbolicLink(),
+    } as FolderWithChildren;
   }
 
   // if we are waiting on a promise
   if (is.promise(folder)) {
-    info+= 'waiting on promise,';
     folder = await folder;
   }
 
@@ -69,12 +65,9 @@ async function readDirectory(fullPath: string,executableExtensions: Set<string> 
 
   // if we haven't scanned this folder yet, do so now.
   if (!folder.children) {
-    info+= 'no children';
-
     folder.children = new Map();
 
     if (!promise) {
-      info+= 'creating promise,';
       // if we didn't already have a promise, create one now.
       // this can happen when the parent has scanned and added in the child but nobody has asked for the children yet.
       promise = new ManualPromise<FolderWithChildren|undefined>();
@@ -132,7 +125,7 @@ async function readDirectory(fullPath: string,executableExtensions: Set<string> 
   return folder.children;
 }
 
-export async function scanFolder(folder: string, scanDepth: number, filePredicate?: (file: File) => Promise<boolean>|boolean,folderPredicate?: (folder: FolderWithChildren) => Promise<boolean>|boolean,files = new Set<string>()):Promise<void> {
+export async function scanFolder(folder: string, scanDepth: number, filePredicate?: (file: File) => Promise<boolean>|boolean,folderPredicate?: (folder: FolderWithChildren) => Promise<boolean>|boolean,files= accumulator<string>()):Promise<void> {
   // should not have depth less than 0
   if (scanDepth < 0) {
     return;
@@ -161,9 +154,11 @@ export async function scanFolder(folder: string, scanDepth: number, filePredicat
  * It can also scan into subfolders of the given folders to a specified depth.
  *
  */
-export class Finder {
+export class Finder implements AsyncIterable<string> {
   #excludedFolders = new Set<string|RegExp>(['winsxs','syswow64','system32']);
-  files = new Set<string>();
+  #files = accumulator<string>().autoComplete(false);
+  files = this.#files.reiterable();
+
   private match: (file: File) => Promise<boolean>|boolean;
   private promises = new Array<Promise<void>>();
 
@@ -184,6 +179,10 @@ export class Finder {
     }
   }
 
+  static resetCache() {
+    cache.clear();
+  }
+
   exclude(folder: string) {
     this.#excludedFolders.add(folder);
   }
@@ -198,11 +197,22 @@ export class Finder {
   scan(depth:number, ...location:Array<Promise<string>|string>):Finder
   scan(...location:Array<Promise<string>|string|number>):Finder {
     const depth = typeof location[0] === 'number' ? location.shift() as number : 0;
-    this.promises.push(...location.map(each => scanFolder(each.toString(), depth, this.match, (f)=>!this.#excludedFolders.has(f.name), this.files)));
+    this.promises.push(...location.map(each => scanFolder(each.toString(), depth, this.match, (f)=>!this.#excludedFolders.has(f.name), this.#files)));
     return this;
   }
 
+  [Symbol.asyncIterator](): AsyncIterator<string, any, undefined> {
+    this.#files.complete();
+    return this.#files[Symbol.asyncIterator]();
+  }
+
   get results(): Promise<Set<string>> {
-    return Promise.all(this.promises).then(()=> this.files);
+    return Promise.all(this.promises).then(async ()=> {
+      const result = new Set<string>();
+      for await (const file of this.files) {
+        result.add(file);
+      }
+      return result;
+    });
   }
 }

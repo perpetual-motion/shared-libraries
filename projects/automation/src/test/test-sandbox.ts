@@ -2,19 +2,20 @@
 // Licensed under the MIT License.
 
 import { describe, it } from 'mocha';
-import { ok, strict, strictEqual } from 'node:assert';
+import { strict, strictEqual } from 'node:assert';
 import { hasErrors } from '../sandbox/interfaces';
 import { Sandbox } from '../sandbox/sandbox';
 import { stringify } from '../system/json';
 
 describe('Sandbox',()=> {
+  /*
   describe('modules', async () => {
     it('transpile: creates a module from some code',async ()=>{
       const sandbox = new Sandbox();
       const src = `
     import { readFile } from 'fs/promises';
 
-    export default { 
+    export default {
       async read() {
         // console.log("reading");
         return await readFile('${__filename.replace(/\\/g,'/')}',{ encoding:'utf-8' });
@@ -37,7 +38,9 @@ describe('Sandbox',()=> {
 
       strictEqual(mod.n(), 100, 'should be able to access a function, return a value');
     });
+
   });
+  */
 
   describe('functions',()=>{
     it('transpile: creates an async function from some code',async ()=>{

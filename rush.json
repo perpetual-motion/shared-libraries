@@ -95,12 +95,6 @@
       "projectFolder": "projects/automation",
       "reviewCategory": "production",
       "shouldPublish": false
-    },
-    {
-      "packageName": "@perpetual-motion/sample",
-      "projectFolder": "projects/sample",
-      "reviewCategory": "production",
-      "shouldPublish": false
     }
   ]
 }

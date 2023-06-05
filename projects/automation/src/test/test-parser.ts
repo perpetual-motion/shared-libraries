@@ -3,9 +3,9 @@
 
 import { ok, strictEqual } from 'assert';
 import { describe, it } from 'mocha';
+// import { transpile } from '../../../extended/sandbox/transpiler';
 import { start } from '../eventing/channels';
 import { parse } from '../eventing/eventParser';
-import { transpile } from '../sandbox/transpiler';
 import { first } from '../system/array';
 
 const tests = [
@@ -23,7 +23,7 @@ const tests = [
 
 describe('Event Handler/Parser', async () => {
   before(async () => {
-    const x = transpile; // pull in the transpiler so it's ready to go and doesn't slow down the first test
+  //  const x = transpile; // pull in the transpiler so it's ready to go and doesn't slow down the first test
     const f= first; //hack: force the import to pull in that file, so that .first is added to array prototype.
   });
 

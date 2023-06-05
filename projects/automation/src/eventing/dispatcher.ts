@@ -278,7 +278,9 @@ export function subscribe<T extends Record<string,any>>(subscriber: Promise<Subs
   options = options || {};
 
   if (is.string(subscriber)) {
-    return  path.isFile(subscriber, options.folder).then(async (filename) => {
+    return path.isFile(subscriber, options.folder).then(async (filename) => {
+      throw new Error('Not Implemented at this time');
+      /*
       // we've been passed a string as the first argument, so this is either a filename or raw source code of a whole module
       // if it is a filename, then we need to load it
       if (filename) {
@@ -290,6 +292,7 @@ export function subscribe<T extends Record<string,any>>(subscriber: Promise<Subs
       // it's not a file, so treat the whole instance as a module source
       const mod = await sandbox.createModule(subscriber as string) as Subscription;
       return subscribe(mod,{...options, bindAll: true });
+      */
     });
   }
 

@@ -3,7 +3,7 @@
 
 import { Socket } from 'node:net';
 import { isPromise } from 'node:util/types';
-import { Port } from '../automation/ports';
+// import { Port } from '../automation/ports';
 import { ReadableLineStream, ReadWriteLineStream } from '../automation/streams';
 import { Emitter } from '../eventing/emitter';
 import { Callback } from '../eventing/interfaces';
@@ -22,6 +22,10 @@ export class is {
     return false;
   }
 
+  static object(node: any): node is Record<string,any> {
+    return typeof node === 'object' && node !== null && !is.array(node);
+  }
+
   static nullish(value: any): value is null | undefined {
     return value === null || value === undefined || value === '';
   }
@@ -30,8 +34,8 @@ export class is {
     return isPromise(value) || (value && typeof(value.then) === 'function');
   }
 
-  static iterable(instance: any): instance is Iterable<unknown> {
-    return !!instance[Symbol.iterator];
+  static iterable<T = unknown>(instance: any): instance is Iterable<T> {
+    return typeof instance !== 'string' && !!instance[Symbol.iterator];
   };
 
   static asyncIterable(instance: any): instance is AsyncIterable<unknown> {
@@ -59,10 +63,11 @@ export class is {
     return (typeof instance?.isKnownEvent)  === 'function';
   }
 
+  /*
   static port(instance: any) : instance is Port{
     return instance && typeof instance.port === 'number' && typeof instance.host === 'string' && typeof instance.purpose === 'string';
   }
-
+*/
   static socket(instance: any): instance is Socket {
     return instance instanceof Socket;
   }

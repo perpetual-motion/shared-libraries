@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "newLine": "LF",
+    "target": "ES2022",
+    "forceConsistentCasingInFileNames": true,
+    "inlineSourceMap": true,
+    "sourceMap": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noImplicitThis": true,
+    "declarationMap": false,
+    "declaration": true,
+    "strict": true,
+    "stripInternal": false,
+    "noEmitHelpers": false,
+    "lib": [
+      "ES2022",
+      "ESNext"
+    ],
+  },
+  "include": []
+}

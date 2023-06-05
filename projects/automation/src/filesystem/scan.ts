@@ -8,7 +8,7 @@ import { path } from './path';
 const BUFSIZE = 32 * 1024;
 
 /** Returns strings found in a binary file */
-export async function* getStringsFromFile(fullPath:any|string|undefined|Promise<string|undefined>, minLength = 4, maxLength = 1024) {
+export async function* getStringsFromFile(fullPath:any|string|undefined|Promise<string|undefined>, minLength = 4, maxLength = 512) {
   // ensure we have a file
   fullPath = await path.isFile(fullPath);
   if (!fullPath){
@@ -66,7 +66,6 @@ export async function* getStringsFromFile(fullPath:any|string|undefined|Promise<
       }
     }
   } finally {
-    // await f.close();
     finalize(f);
   }
 }
@@ -80,4 +79,19 @@ export async function scanForString(fullPath:any|string|undefined|Promise<string
     }
   }
   return false;
+}
+
+/** given a map of string to regex, returns a map for the values for the regexes when a match is found. */
+export async function scanForStrings(fullPath:any|string|undefined|Promise<string|undefined>, rxs:Map<string,RegExp>) {
+  const results = new Map<string,string>();
+
+  for await (const each of getStringsFromFile(fullPath)) {
+    for (const [name,rx] of rxs){
+      const m = rx.exec(each);
+      if (m) {
+        results.set(name, m[1]||m[0]);
+      }
+    }
+  }
+  return results;
 }

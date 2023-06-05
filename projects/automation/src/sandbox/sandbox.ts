@@ -2,10 +2,10 @@
 // Licensed under the MIT License.
 
 import { Context, createContext, runInContext, Script } from 'vm';
+// import { transpile } from '../../../extended/sandbox/transpiler';
 import { debug, error, info, verbose, warning } from '../eventing/channels';
 import { stringify } from '../system/json';
-import { ArbitraryModule, CreateOptions, hasErrors, ScriptError } from './interfaces';
-import { transpile } from './transpiler';
+import { CreateOptions, ScriptError } from './interfaces';
 
 /**
  * Creates a reusable safe-eval sandbox to execute code in.
@@ -90,7 +90,7 @@ export class Sandbox{
    * @param options the creation options
    * @return an array of errors if there were any
    * @returns an object containing the module exports
-   */
+   * /
   async createModule<T = ArbitraryModule>(sourceCode: string, options?: CreateOptions) :Promise<Array<ScriptError> | T>{
     // insert defaults in options
     options = {
@@ -131,6 +131,7 @@ export class Sandbox{
       }];
     }
   }
+  */
 
   /**
    * Creates an adhoc function from raw JS/TS code.
@@ -164,6 +165,7 @@ export class Sandbox{
 
     let scriptSrc = sourceCode;
 
+    /*
     if (options.transpile) {
       return transpile(sourceCode, options.filename!, filterErrorCodesForFunction, {rawFunction: true}).then(result => {
       // create the project, parse the code and check for errors
@@ -206,6 +208,7 @@ export class Sandbox{
 
       });
     }
+    */
 
     // if we don't have to invoke the transpiler, this is simple, and a lot cheaper.
     // (but we don't get any fancy errors if it's not valid javascript, so, this should be used when it's not unverified user input)

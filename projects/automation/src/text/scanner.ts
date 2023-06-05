@@ -2,7 +2,8 @@
 // Licensed under the MIT License.
 
 import { CharacterCodes, isBinaryDigit, isDigit, isHexDigit, isIdentifierPart, isIdentifierStart, isLineBreak, isWhiteSpaceSingleLine, sizeOf } from './character-codes';
-import { i } from './i18n';
+// import { i } from './i18n';
+
 
 export enum MessageCategory {
   Warning,
@@ -743,7 +744,7 @@ export class Scanner implements Token {
     }
 
     if (this.#ch === CharacterCodes.E || this.#ch === CharacterCodes.e) {
-      this.assert(isDigit(this.#chNext), i`ParseError: Digit expected (0-9)`);
+      this.assert(isDigit(this.#chNext), 'ParseError: Digit expected (0-9)');
       this.advance();
       scientific = this.scanDigits();
     }
@@ -762,7 +763,7 @@ export class Scanner implements Token {
   }
 
   private scanHexNumber() {
-    this.assert(isHexDigit(this.#chNextNext), i`ParseError: Hex Digit expected (0-F,0-f)`);
+    this.assert(isHexDigit(this.#chNextNext), 'ParseError: Hex Digit expected (0-F,0-f)');
     this.advance(2);
 
     this.text = `0x${this.scanUntil((ch) => !isHexDigit(ch), 'Hex Digit')}`;
@@ -770,7 +771,7 @@ export class Scanner implements Token {
   }
 
   private scanBinaryNumber() {
-    this.assert(isBinaryDigit(this.#chNextNext), i`ParseError: Binary Digit expected (0,1)`);
+    this.assert(isBinaryDigit(this.#chNextNext), 'ParseError: Binary Digit expected (0,1)');
 
     this.advance(2);
 
@@ -799,7 +800,7 @@ export class Scanner implements Token {
       }
 
       if (this.eof) {
-        this.assert(!expectedClose, i`Unexpected end of file while searching for '${expectedClose}'`);
+        this.assert(!expectedClose, `Unexpected end of file while searching for '${expectedClose}'`);
         break;
       }
 
@@ -937,7 +938,7 @@ export class Scanner implements Token {
           result += '`';
           break;
         default:
-          throw new ScannerError(i`Invalid escape sequence`, this.position.line, this.position.column);
+          throw new ScannerError('Invalid escape sequence', this.position.line, this.position.column);
       }
 
       pos++;

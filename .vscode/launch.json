@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "name": "MochaTest",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "continueOnAttach": true,
+      "autoAttachChildProcesses": false,
+      "skipFiles": ["<node_internals>/**"],
+      "outFiles": ["${workspaceFolder}/**/dist/**/*.js", "!**/node_modules/**"]
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 
 import { describe, it } from 'mocha';
 import { start } from '../eventing/channels';
-import { Finder, scanFolder } from '../filesystem/async-finder';
+// import { Finder, scanFolder } from '../filesystem/async-finder';
 import { Finder as OldFinder } from '../filesystem/find';
 import { filterToFolders, pathsFromVariable } from '../filesystem/path';
 
@@ -27,6 +27,7 @@ describe('Scan for executables', () => {
   });
 });
 
+/*
 describe('Use the async scanner', () => {
   it('Just scan whole pgm files folders', async () => {
     const searchPaths = await filterToFolders(pathsFromVariable('PATH'));
@@ -56,3 +57,4 @@ describe('Use the async scanner', () => {
     }
   });
 });
+*/

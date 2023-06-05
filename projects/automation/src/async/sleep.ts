@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 
-/** pause for a number of milliseconds */
-export function sleep(msecs: number): Promise<number> {
-  return new Promise<number>((resolve) => setTimeout(()=>resolve(msecs),msecs));
-}
+export { setImmediate as now, setTimeout as after } from 'timers/promises';
+import { setTimeout as after } from 'timers/promises';
 
+/** pause for a number of milliseconds */
+export const sleep = after as (msec:number)=>Promise<void>;

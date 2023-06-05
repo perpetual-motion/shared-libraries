@@ -1,12 +1,20 @@
 {
   "name": "@perpetual-motion/automation",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "All-in-one-automation library",
   "main": "dist/exports.js",
   "typings": "dist/exports.d.ts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/perpetual-motion/shared-libraries"
+  },
+  "homepage": "https://github.com/perpetual-motion/shared-libraries",
+  
   "scripts": {
     "build": "tsc -p .",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "pack": " npm run clean && npm run build && npm pack"
   },
   "devDependencies": {
     "@types/node": "^16.11.7",
@@ -21,9 +29,5 @@
     "@rushstack/eslint-config": "3.2.0",
     "eslint-plugin-header": "~3.1.1",
     "rimraf": "^3.0.2"
-  },
-  "dependencies": {
-    "ts-morph": "^16.0.0",
-    "piscina": "^3.2.0"
   }
 }

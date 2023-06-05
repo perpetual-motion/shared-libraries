@@ -121,3 +121,6 @@ common/autoinstallers/*/.npmrc
 .heft
 
 **/dist/**
+
+projects/**/*.txt
+.vscode/*attic*
