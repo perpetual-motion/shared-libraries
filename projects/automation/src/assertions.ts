@@ -5,7 +5,7 @@ import { isAbsolute as isAbsolutePath } from 'path';
 import { path } from './filesystem/path';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export class assert {
+export class asserts {
   static async isFile(fileName:string|undefined|Promise<string|undefined>): Promise<string> {
     return (await path.isFile(fileName)) || fail(new Error(`File ${fileName} is not a file`));
   }

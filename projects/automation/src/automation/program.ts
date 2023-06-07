@@ -3,7 +3,7 @@
 
 /* eslint-disable @typescript-eslint/naming-convention */
 import { fail } from 'assert';
-import { assert } from '../assertions';
+import { asserts } from '../assertions';
 import { Factory } from '../async/factory';
 import { lazy } from '../async/lazy';
 import { Descriptors } from '../eventing/descriptor';
@@ -93,10 +93,10 @@ async function processFactory(executable: string|Launcher, ...initialArgs: Array
       const bin = await emitNow<string>('select-binary',Descriptors.none, executable, opts.choices? await opts.choices : new Set()) || executable;
 
       // ensure that the executable is an absolute path
-      assert.isAbsolute(bin);
+      asserts.isAbsolute(bin);
 
       // ensure that the executable exists and is executable
-      await assert.isExecutable(bin);
+      await asserts.isExecutable(bin);
 
       return bin;
     });
